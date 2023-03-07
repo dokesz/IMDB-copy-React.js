@@ -13,41 +13,38 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [page, setPage] = useState(1);
 
+
   useEffect(() => {
 
     const url = `https://www.omdbapi.com/?s=${query}&page=${page}&apikey=643f294a`;
     const findMovie = async (url) => {
-      //e.preventDefault();
-      try {
-        console.log('query page: ',page);
-        //console.log(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=643f294a`)
-        
+      try {        
         const res = await fetch(url);
         const data = await res.json();
         console.log(data);
         if (data.Response === "True") {
-          setMovies(data.Search);
+          console.log(data.Search.length);
+          if(data.Search.length >= '10'){
+            setMovies(prevData => [...prevData, ...data.Search]);
+          }
           setShowAlert(false);
         } else setShowAlert(true);
       } catch (e) {
         console.log(e);
       }
     };
-
     findMovie(url)
   }, [query, page]);
 
 
 
-  const changeHandler = (e) => {
-    //if(e.target.value <= 0) setShowAlert(false); 
+  let changeHandler = (e) => {
     setQuery(e.target.value);
     setPage(1);
   };
 
   const setPageHandler = () => {
     const nextPage = page + 1; 
-    console.log("belso pagenumber:", nextPage);
     setPage(nextPage);
   };
 
@@ -66,7 +63,7 @@ function App() {
               value={query}
               onChange={changeHandler}
             />
-            <Button type="submit" variant="outline-primary">
+            <Button type="button" variant="outline-primary">
               Search
             </Button>
           </Form>
