@@ -22,24 +22,27 @@ function App() {
         const data = await res.json();
         console.log(data);
         if (data.Response === "True") {
-          setMovies(data.Search);
-          console.log(data.Search.length);
+          if (page === 1) {
+            setMovies(data.Search);
+          } else {
+            setMovies((movies) => [...movies, ...data.Search]);
+          }
           if (data.Search.length === 10) {
             setShowBtn(true);
           } else setShowBtn(false);
           setShowAlert(false);
-        } else if(query.length === 0) {
+        } else if (query.length === 0) {
           setShowAlert(false);
-        } else setShowAlert(true);
+        } else {
+          setShowAlert(true);
+          setMovies([]);
+        }
       } catch (e) {
         console.log(e);
       }
     };
     findMovie(url);
   }, [query, page]);
-
-
-  //setMovies((prevData) => [...prevData, ...data.Search]);
 
   let changeHandler = (e) => {
     setQuery(e.target.value);
